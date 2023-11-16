@@ -9,6 +9,7 @@ import getopt
 import sys
 import os
 import shutil
+from datetime import datetime
 
 def encontrar_archivos_json_bz2(directorio, fecha_inicial=None, fecha_final=None):
     archivos_encontrados = []
@@ -38,8 +39,8 @@ directorio_absoluto = os.path.abspath(directorio_a_copiar)
 # Verificar si el directorio ingresado existe
 if os.path.exists(directorio_absoluto):
     # Pedir al usuario las fechas inicial y final (opcional)
-    fecha_inicial = input("Ingrese la fecha inicial (dd-mm-aa) o presione Enter para omitir: ")
-    fecha_final = input("Ingrese la fecha final (dd-mm-aa) o presione Enter para omitir: ")
+    fecha_inicial = None
+    fecha_final = None
 
     # Convertir las fechas ingresadas a un formato adecuado si fueron ingresadas
     if fecha_inicial:
@@ -95,6 +96,15 @@ if os.path.exists(archivo_hashtags):
 
 tweets_data = []
 
+fecha_inicial_str = input("Ingrese la fecha inicial (dd-mm-aaaa) o presione Enter para omitir: ")
+fecha_final_str = input("Ingrese la fecha final (dd-mm-aaaa) o presione Enter para omitir: ")
+
+# Convertir las fechas ingresadas a un formato adecuado si fueron ingresadas
+if fecha_inicial_str:
+    fecha_inicial = datetime.strptime(fecha_inicial_str, "%d-%m-%Y").date()
+if fecha_final_str:
+    fecha_final = datetime.strptime(fecha_final_str, "%d-%m-%Y").date()
+
 for archivo_bz2 in os.listdir(directorio):
     if archivo_bz2.endswith(".bz2"):
         ruta_archivo = os.path.join(directorio, archivo_bz2)
@@ -107,11 +117,22 @@ for archivo_bz2 in os.listdir(directorio):
                 try:
                     datos_tweet = json.loads(tweet)
 
+                    # Convertir la fecha del tweet al formato deseado
+                    fecha_tweet_str = datos_tweet.get("created_at", "")
+                    if fecha_tweet_str:
+                        fecha_tweet = datetime.strptime(fecha_tweet_str, "%a %b %d %H:%M:%S +0000 %Y").date()
+
                     # Verificar si el tweet contiene al menos uno de los hashtags buscados
                     if hashtags_a_buscar:
                         tweet_contiene_hashtag = any(hashtag['text'] in hashtags_a_buscar for hashtag in datos_tweet.get("entities", {}).get("hashtags", []))
                         if not tweet_contiene_hashtag:
                             continue  # Si no contiene ninguno de los hashtags, pasar al siguiente tweet
+
+                    # Verificar si la fecha del tweet está dentro del rango especificado
+                    if fecha_inicial and fecha_final:
+                        if not (fecha_inicial <= fecha_tweet <= fecha_final):
+                            continue  # Si la fecha está fuera del rango, pasar al siguiente tweet
+
 
                     tweet_filtrado = {
                         "created_at": datos_tweet.get("created_at", None),
