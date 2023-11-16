@@ -63,7 +63,18 @@ if os.path.exists(directorio_absoluto):
 
     # Copiar archivos al directorio de destino
     for archivo in archivos_json_bz2:
-        shutil.copy(archivo, directorio_destino)
+        nombre_archivo = os.path.basename(archivo)
+        nombre_sin_extension = os.path.splitext(nombre_archivo)[0]
+        extension = os.path.splitext(nombre_archivo)[1]
+
+        # Verificar si el archivo ya existe en el directorio destino
+        contador = 1
+        nuevo_nombre = nombre_archivo
+        while os.path.exists(os.path.join(directorio_destino, nuevo_nombre)):
+            nuevo_nombre = f"{nombre_sin_extension}_{contador}{extension}"
+            contador += 1
+
+        shutil.copy(archivo, os.path.join(directorio_destino, nuevo_nombre))
 
     # Realizar el procedimiento necesario con los archivos copiados en directorio_destino
     # (Aquí puedes agregar el procedimiento que necesites hacer)
@@ -411,5 +422,6 @@ for coretweet in coretweets_data['coretweets']:
 # Exportar el grafo a un archivo corrtw.gexf
 nx.write_gexf(G, 'corrtw.gexf')
 
-for archivo in archivos_json_bz2:
-    os.remove(os.path.join(directorio_destino, os.path.basename(archivo)))
+carpeta_a_eliminar = os.path.join(directorio_destino)
+if os.path.exists(carpeta_a_eliminar):
+    shutil.rmtree(carpeta_a_eliminar)
