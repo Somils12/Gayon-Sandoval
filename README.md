@@ -1,4 +1,4 @@
-# Data Mining and Network Analysis of Twitter Data
+# Advanced Twitter Data Analysis: Extraction, Content Filtering, and Interaction Network Modeling (Retweets, Mentions, and Coretweets)
 
 This project contains a Python script that performs extensive data mining and network analysis on Twitter data, leveraging JSON and BZ2 files. It filters, processes, and visualizes tweet metadata related to hashtags, retweets, and mentions, allowing for in-depth insights into user interactions within a Twitter dataset. The script also constructs graph representations of retweet, mention, and coretweet networks, exporting them in GEXF format for advanced network analysis.
 
