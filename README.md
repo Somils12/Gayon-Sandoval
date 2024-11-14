@@ -51,24 +51,29 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank() # Unique ID of the current process
 size = comm.Get_size() # Total number of processes
 ```
-2. Division of work: The JSON files to be processed are divided into several "chunks" according to the total number of processes (size). This allows the workload to be distributed evenly among all available processes:
+
+2. **Division of work:** The JSON files to be processed are divided into several "chunks" according to the total number of processes (size). This allows the workload to be distributed evenly among all available processes:
 ```python
 chunks = [files_to_process[i::size] for i in range(size)]
 ```
-3. Distribution of files to be processed: The "chunks" are distributed among the processes using comm.scatter, which allows each process to receive a set of files to process:
+
+3. **Distribution of files to be processed:** The "chunks" are distributed among the processes using comm.scatter, which allows each process to receive a set of files to process:
 ```python
 files_to_process = comm.scatter(chunks, root=0)
 ```
-4. Parallel processing: Each process processes the assigned files independently. Processing consists of extracting and filtering tweets according to certain criteria (such as hashtags and dates), and storing the results locally in each process:
+
+4. **Parallel processing:** Each process processes the assigned files independently. Processing consists of extracting and filtering tweets according to certain criteria (such as hashtags and dates), and storing the results locally in each process:
 ```python
 for file in files_to_process:
 tweets_data. extend(merged_output(file, hashtags_to_find, start_date, end_date))
 ```
-5. Gathering results: Once all processes have completed their work, the results (processed tweet data) are collected in the root process (rank 0) using comm.gather:
+
+5. **Gathering results:** Once all processes have completed their work, the results (processed tweet data) are collected in the root process (rank 0) using comm.gather:
 ```python
 all_tweets_data = comm.gather(tweets_data, root=0)
 ```
-6. Consolidation and saving: Finally, the root process combines all the results from the different processes and saves the consolidated file with the processed data:
+
+6. **Consolidation and saving:** Finally, the root process combines all the results from the different processes and saves the consolidated file with the processed data:
 ```python
 merged_tweets = []
 for data in all_tweets_data:
@@ -77,7 +82,7 @@ with open(output_file, 'w', encoding='utf-8') as output_file:
 json. dump(merged_tweets, output_file, ensure_ascii=False, indent=2)
 ```
 
-###What was parallelism used for?
+## What was parallelism used for?
 Parallelism in this code was used to process large volumes of data (in this case, JSON files with tweet data) more efficiently. Using MPI allowed:
 
 - Splitting data files into smaller parts and distributing them between processes.
