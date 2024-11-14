@@ -88,7 +88,7 @@ Parallelism in this code was used to process large volumes of data (in this case
 - Splitting data files into smaller parts and distributing them between processes.
 - Filtering and processing tweets independently and simultaneously.
 - Reducing overall execution time, especially when you have many large files.
--
+
 Parallelism allows the system to handle more data in less time, which is crucial when working with large databases or when processing speed is an important factor.
 
 
@@ -119,6 +119,3 @@ python script_name.py -d <directory> -h <hashtag_file> -fi <start_date> -ff <end
 ```bash
 python script_name.py -d "./data" -h "hashtags.txt" -fi "01-01-2023" -ff "31-12-2023" --grt --gm --gcrt
 ```
-
-
-This README.md provides a clear, structured, and detailed guide for understanding the functionalities, usage, and requirements of the script, aligning it with high standards for data analysis and network research documentation.
